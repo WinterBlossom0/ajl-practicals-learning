@@ -1,4 +1,4 @@
-public class Q8_DecoratorPatternDemo {
+public class Q08_DecoratorPatternDemo {
     public static void main(String[] args) {
         Coffee simple = new SimpleCoffee();
         // Wrap simple coffee with milk decorator

@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Q4_FileWordCounterDemo {
+public class Q04_FileWordCounterDemo {
     public static void main(String[] args) throws IOException {
         // Create a test file of 100+ words
         String text = "Java is a programming language. Java is designed to run anywhere. " +

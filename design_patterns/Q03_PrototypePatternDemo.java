@@ -1,4 +1,4 @@
-public class Q3_PrototypePatternDemo {
+public class Q03_PrototypePatternDemo {
     public static void main(String[] args) {
         Sheep s1 = new Sheep("Dolly");
         

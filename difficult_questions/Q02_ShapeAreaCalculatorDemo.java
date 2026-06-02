@@ -39,7 +39,7 @@ class Pentagon implements Shape {
     public double area() { return 1.72 * s * s; } // Simplified constant area formula
 }
 
-public class Q2_ShapeAreaCalculatorDemo {
+public class Q02_ShapeAreaCalculatorDemo {
     public static void main(String[] args) {
         List<Shape> shapes = List.of(
             new Circle(5), 

@@ -30,7 +30,7 @@ class SlackSender implements NotificationSender {
     public void send(String msg, String rec) { System.out.println("Slack to " + rec + ": " + msg); }
 }
 
-public class Q1_NotificationSystemDemo {
+public class Q01_NotificationSystemDemo {
     public static void main(String[] args) {
         String msg = "Server is down!";
 

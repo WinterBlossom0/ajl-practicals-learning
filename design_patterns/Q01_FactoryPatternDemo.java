@@ -1,4 +1,4 @@
-public class Q1_FactoryPatternDemo {
+public class Q01_FactoryPatternDemo {
     public static void main(String[] args) {
         ShapeFactory factory = new ShapeFactory();
         

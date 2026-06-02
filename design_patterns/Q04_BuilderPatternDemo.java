@@ -1,4 +1,4 @@
-public class Q4_BuilderPatternDemo {
+public class Q04_BuilderPatternDemo {
     public static void main(String[] args) {
         // Construct the complex User object step-by-step using method chaining
         User u = new User.UserBuilder("John", "Doe").age(25).build();

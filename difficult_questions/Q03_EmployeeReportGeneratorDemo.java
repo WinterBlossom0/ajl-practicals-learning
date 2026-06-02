@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 // Records automatically generate constructor, getters (name(), department(), etc.), and toString()
 record Employee(String name, String department, double salary, int yearJoined) {}
 
-public class Q3_EmployeeReportGeneratorDemo {
+public class Q03_EmployeeReportGeneratorDemo {
     public static void main(String[] args) {
         List<Employee> list = Arrays.asList(
             new Employee("Alice", "Engineering", 95000, 2018),

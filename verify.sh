@@ -29,7 +29,7 @@ run_java_file() {
 # 0. Run Difficult Questions (Q1 to Q5 in difficult_questions)
 echo "=== Category 0: Difficult Questions ==="
 for i in {1..5}; do
-    file=$(find "/mnt/c/Users/vihaa/OneDrive/Documents/ajl practicals/difficult_questions" -name "Q${i}_*.java" | head -n 1)
+    file=$(find "/mnt/c/Users/vihaa/OneDrive/Documents/ajl practicals/difficult_questions" -name "Q0${i}_*.java" | head -n 1)
     if [ -n "$file" ]; then
         run_java_file "$file"
     else
@@ -40,7 +40,12 @@ done
 # 1. Run Design Patterns (Q1 to Q19 in design_patterns)
 echo "=== Category 1: Design Patterns ==="
 for i in {1..19}; do
-    file=$(find "/mnt/c/Users/vihaa/OneDrive/Documents/ajl practicals/design_patterns" -name "Q${i}_*.java" | head -n 1)
+    if [ $i -lt 10 ]; then
+        prefix="Q0${i}"
+    else
+        prefix="Q${i}"
+    fi
+    file=$(find "/mnt/c/Users/vihaa/OneDrive/Documents/ajl practicals/design_patterns" -name "${prefix}_*.java" | head -n 1)
     if [ -n "$file" ]; then
         run_java_file "$file"
     else

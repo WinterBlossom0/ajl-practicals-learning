@@ -1,4 +1,4 @@
-public class Q6_BridgePatternDemo {
+public class Q06_BridgePatternDemo {
     public static void main(String[] args) {
         // Construct refined abstraction with concrete state implementation
         Device tv = new TV(new OnState());

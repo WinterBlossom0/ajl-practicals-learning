@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Q7_CompositePatternDemo {
+public class Q07_CompositePatternDemo {
     public static void main(String[] args) {
         Directory root = new Directory();
         root.add(new File("notes.txt"));

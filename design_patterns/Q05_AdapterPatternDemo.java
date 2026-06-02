@@ -1,4 +1,4 @@
-public class Q5_AdapterPatternDemo {
+public class Q05_AdapterPatternDemo {
     public static void main(String[] args) {
         ToyDuck toy = new PlasticToyDuck();
         // Wrap sparrow in adapter to make it look like a ToyDuck

@@ -14,7 +14,7 @@ import java.util.*;
  * - Downtime Handling: Catches connection or client exceptions and returns clean 400/503 statuses instead of stack traces.
  */
 
-public class Q5_StudentCourseRegistrationDemo {
+public class Q05_StudentCourseRegistrationDemo {
     public static void main(String[] args) {
         System.out.println("=== Q5: Student & Course Registration Simulator ===");
 

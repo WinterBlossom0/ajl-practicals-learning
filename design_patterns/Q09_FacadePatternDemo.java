@@ -1,4 +1,4 @@
-public class Q9_FacadePatternDemo {
+public class Q09_FacadePatternDemo {
     public static void main(String[] args) {
         // Client interacts only with the Facade class
         ComputerFacade computer = new ComputerFacade();

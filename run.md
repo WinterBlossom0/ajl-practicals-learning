@@ -10,27 +10,27 @@ Open your terminal at the root of the workspace directory (`c:\Users\vihaa\OneDr
 
 * **Q1: SOLID Notification System**
   ```bash
-  java difficult_questions/Q1_NotificationSystemDemo.java
+  java difficult_questions/Q01_NotificationSystemDemo.java
   ```
 
 * **Q2: SOLID Shape Area Calculator**
   ```bash
-  java difficult_questions/Q2_ShapeAreaCalculatorDemo.java
+  java difficult_questions/Q02_ShapeAreaCalculatorDemo.java
   ```
 
 * **Q3: Streams API Employee Report Generator**
   ```bash
-  java difficult_questions/Q3_EmployeeReportGeneratorDemo.java
+  java difficult_questions/Q03_EmployeeReportGeneratorDemo.java
   ```
 
 * **Q4: Streams API File Word Frequency Counter**
   ```bash
-  java difficult_questions/Q4_FileWordCounterDemo.java
+  java difficult_questions/Q04_FileWordCounterDemo.java
   ```
 
 * **Q5: Microservices Student & Course Registration**
   ```bash
-  java difficult_questions/Q5_StudentCourseRegistrationDemo.java
+  java difficult_questions/Q05_StudentCourseRegistrationDemo.java
   ```
 
 ---
@@ -39,47 +39,47 @@ Open your terminal at the root of the workspace directory (`c:\Users\vihaa\OneDr
 
 * **Q1: Factory Design Pattern**
   ```bash
-  java design_patterns/Q1_FactoryPatternDemo.java
+  java design_patterns/Q01_FactoryPatternDemo.java
   ```
 
 * **Q2: Abstract Factory Design Pattern**
   ```bash
-  java design_patterns/Q2_AbstractFactoryPatternDemo.java
+  java design_patterns/Q02_AbstractFactoryPatternDemo.java
   ```
 
 * **Q3: Prototype Design Pattern**
   ```bash
-  java design_patterns/Q3_PrototypePatternDemo.java
+  java design_patterns/Q03_PrototypePatternDemo.java
   ```
 
 * **Q4: Builder Design Pattern**
   ```bash
-  java design_patterns/Q4_BuilderPatternDemo.java
+  java design_patterns/Q04_BuilderPatternDemo.java
   ```
 
 * **Q5: Adapter Design Pattern**
   ```bash
-  java design_patterns/Q5_AdapterPatternDemo.java
+  java design_patterns/Q05_AdapterPatternDemo.java
   ```
 
 * **Q6: Bridge Design Pattern**
   ```bash
-  java design_patterns/Q6_BridgePatternDemo.java
+  java design_patterns/Q06_BridgePatternDemo.java
   ```
 
 * **Q7: Composite Design Pattern**
   ```bash
-  java design_patterns/Q7_CompositePatternDemo.java
+  java design_patterns/Q07_CompositePatternDemo.java
   ```
 
 * **Q8: Decorator Design Pattern**
   ```bash
-  java design_patterns/Q8_DecoratorPatternDemo.java
+  java design_patterns/Q08_DecoratorPatternDemo.java
   ```
 
 * **Q9: Facade Design Pattern**
   ```bash
-  java design_patterns/Q9_FacadePatternDemo.java
+  java design_patterns/Q09_FacadePatternDemo.java
   ```
 
 * **Q10: Flyweight Design Pattern**

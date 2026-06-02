@@ -1,4 +1,4 @@
-public class Q2_AbstractFactoryPatternDemo {
+public class Q02_AbstractFactoryPatternDemo {
     public static void main(String[] args) {
         // Retrieve concrete factory for rounded shapes
         AbstractFactory factory = FactoryProducer.getFactory(true);
