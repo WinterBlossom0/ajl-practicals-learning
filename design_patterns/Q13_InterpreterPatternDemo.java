@@ -1,94 +1,23 @@
-/**
- * Q13: Interpreter Design Pattern (Behavioral Pattern)
- * 
- * Explanation:
- * The Interpreter Pattern defines a representation for a language's grammar along with
- * an interpreter that uses the representation to interpret sentences in the language.
- * It is used to evaluate language syntax, expressions, or queries.
- * 
- * Real-world analogy: A calculator interpreting and executing mathematical 
- * expressions like "3 + 5 * 2".
- */
-
-// Main class to demonstrate Interpreter Pattern (must be first for direct Java runner)
 public class Q13_InterpreterPatternDemo {
-
-    // Rule 1: Male query check (Or expression)
-    public static Expression getMaleExpression() {
-        Expression robert = new TerminalExpression("Robert");
-        Expression john = new TerminalExpression("John");
-        return new OrExpression(robert, john);
-    }
-
-    // Rule 2: Married woman query check (And expression)
-    public static Expression getMarriedWomanExpression() {
-        Expression julie = new TerminalExpression("Julie");
-        Expression married = new TerminalExpression("Married");
-        return new AndExpression(julie, married);
-    }
-
     public static void main(String[] args) {
-        System.out.println("=== Q13: Interpreter Design Pattern Demo ===");
-
-        Expression isMale = getMaleExpression();
-        Expression isMarriedWoman = getMarriedWomanExpression();
-
-        System.out.println("Is John male? " + isMale.interpret("John"));
-        System.out.println("Is Married Julie a married woman? " + isMarriedWoman.interpret("Married Julie"));
-        System.out.println("Is Married Lucy a married woman? " + isMarriedWoman.interpret("Married Lucy"));
+        Expression isMale = new OrExpression(new TerminalExpression("John"), new TerminalExpression("Robert"));
+        System.out.println("John is male? " + isMale.interpret("John")); // true
     }
 }
 
-// Expression Interface
 interface Expression {
     boolean interpret(String context);
 }
 
-// Concrete expression class for terminal rules (checks if a word is in context)
 class TerminalExpression implements Expression {
-    private String data;
-
-    public TerminalExpression(String data) {
-        this.data = data;
-    }
-
-    @Override
-    public boolean interpret(String context) {
-        if (context.contains(data)) {
-            return true;
-        }
-        return false;
-    }
+    private final String data;
+    public TerminalExpression(String data) { this.data = data; }
+    public boolean interpret(String context) { return context.contains(data); }
 }
 
-// Concrete expression class for OR rule
 class OrExpression implements Expression {
-    private Expression expr1 = null;
-    private Expression expr2 = null;
-
-    public OrExpression(Expression expr1, Expression expr2) {
-        this.expr1 = expr1;
-        this.expr2 = expr2;
-    }
-
-    @Override
-    public boolean interpret(String context) {
-        return expr1.interpret(context) || expr2.interpret(context);
-    }
-}
-
-// Concrete expression class for AND rule
-class AndExpression implements Expression {
-    private Expression expr1 = null;
-    private Expression expr2 = null;
-
-    public AndExpression(Expression expr1, Expression expr2) {
-        this.expr1 = expr1;
-        this.expr2 = expr2;
-    }
-
-    @Override
-    public boolean interpret(String context) {
-        return expr1.interpret(context) && expr2.interpret(context);
-    }
+    private final Expression expr1;
+    private final Expression expr2;
+    public OrExpression(Expression e1, Expression e2) { expr1 = e1; expr2 = e2; }
+    public boolean interpret(String context) { return expr1.interpret(context) || expr2.interpret(context); }
 }
