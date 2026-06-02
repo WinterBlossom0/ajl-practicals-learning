@@ -1,8 +1,37 @@
 # How to Run Each Program (Copy-Paste Guide)
 
-This guide provides the exact terminal commands to run each of the 31 programs using **Direct Execution (Java 11 or newer)**. You can run any `.java` file directly without compiling it first. 
+This guide provides the exact terminal commands to run each of the programs using **Direct Execution (Java 11 or newer)**. You can run any `.java` file directly without compiling it first.
 
 Open your terminal at the root of the workspace directory (`c:\Users\vihaa\OneDrive\Documents\ajl practicals`) and copy-paste any command below:
+
+---
+
+## Difficult Questions (Category 0)
+
+* **Q1: SOLID Notification System**
+  ```bash
+  java difficult_questions/Q1_NotificationSystemDemo.java
+  ```
+
+* **Q2: SOLID Shape Area Calculator**
+  ```bash
+  java difficult_questions/Q2_ShapeAreaCalculatorDemo.java
+  ```
+
+* **Q3: Streams API Employee Report Generator**
+  ```bash
+  java difficult_questions/Q3_EmployeeReportGeneratorDemo.java
+  ```
+
+* **Q4: Streams API File Word Frequency Counter**
+  ```bash
+  java difficult_questions/Q4_FileWordCounterDemo.java
+  ```
+
+* **Q5: Microservices Student & Course Registration**
+  ```bash
+  java difficult_questions/Q5_StudentCourseRegistrationDemo.java
+  ```
 
 ---
 
