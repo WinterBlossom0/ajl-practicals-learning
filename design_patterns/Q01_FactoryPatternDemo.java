@@ -1,33 +1,57 @@
 public class Q01_FactoryPatternDemo {
     public static void main(String[] args) {
-        ShapeFactory factory = new ShapeFactory();
-        
-        // Request objects from the factory without exposing creation logic
-        factory.getShape("CIRCLE").draw();
-        factory.getShape("SQUARE").draw();
+        System.out.println("=== Factory Method Pattern ===");
+
+        Restaurant beefRest = new BeefBurgerRestaurant();
+        beefRest.orderBurger();
+
+        Restaurant veggieRest = new VeggieBurgerRestaurant();
+        veggieRest.orderBurger();
     }
 }
 
-// 1. Common Product Interface
-interface Shape {
-    void draw();
+// Product Interface
+interface Burger {
+    void prepare();
 }
 
-// 2. Concrete Product implementations
-class Circle implements Shape {
-    public void draw() { System.out.println("Circle drawn."); }
+// Concrete Products
+class BeefBurger implements Burger {
+    @Override
+    public void prepare() {
+        System.out.println("Preparing Beef Burger.");
+    }
 }
 
-class Square implements Shape {
-    public void draw() { System.out.println("Square drawn."); }
+class VeggieBurger implements Burger {
+    @Override
+    public void prepare() {
+        System.out.println("Preparing Veggie Burger.");
+    }
 }
 
-// 3. The Factory class containing the creation logic
-class ShapeFactory {
-    // Factory method: decides which subclass to instantiate based on input
-    public Shape getShape(String type) {
-        if (type.equalsIgnoreCase("CIRCLE")) return new Circle();
-        if (type.equalsIgnoreCase("SQUARE")) return new Square();
-        return null;
+// Creator
+abstract class Restaurant {
+    public Burger orderBurger() {
+        Burger burger = createBurger();
+        burger.prepare();
+        return burger;
+    }
+    
+    public abstract Burger createBurger();
+}
+
+// Concrete Creators
+class BeefBurgerRestaurant extends Restaurant {
+    @Override
+    public Burger createBurger() {
+        return new BeefBurger();
+    }
+}
+
+class VeggieBurgerRestaurant extends Restaurant {
+    @Override
+    public Burger createBurger() {
+        return new VeggieBurger();
     }
 }

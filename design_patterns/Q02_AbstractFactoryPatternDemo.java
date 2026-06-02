@@ -1,43 +1,91 @@
 public class Q02_AbstractFactoryPatternDemo {
     public static void main(String[] args) {
-        // Retrieve concrete factory for rounded shapes
-        AbstractFactory factory = FactoryProducer.getFactory(true);
-        factory.getShape().draw(); // Outputs: Rounded Shape
+        System.out.println("=== Abstract Factory Pattern ===");
+
+        // Create MSI products using MSI Factory
+        Company msi = new MsiManufacturer();
+        Gpu msiGpu = msi.createGpu();
+        Monitor msiMonitor = msi.createMonitor();
+        msiGpu.assemble();
+        msiMonitor.display();
+
+        // Create Asus products using Asus Factory
+        Company asus = new AsusManufacturer();
+        Gpu asusGpu = asus.createGpu();
+        Monitor asusMonitor = asus.createMonitor();
+        asusGpu.assemble();
+        asusMonitor.display();
     }
 }
 
-// Product interface
-interface Shape {
-    void draw();
+// Product 1 Interface
+interface Gpu {
+    void assemble();
 }
 
-// Concrete products
-class NormalShape implements Shape {
-    public void draw() { System.out.println("Normal Shape"); }
+// Product 2 Interface
+interface Monitor {
+    void display();
 }
 
-class RoundedShape implements Shape {
-    public void draw() { System.out.println("Rounded Shape"); }
+// Concrete MSI Products
+class MsiGpu implements Gpu {
+    @Override
+    public void assemble() {
+        System.out.println("Assembling MSI GPU.");
+    }
 }
 
-// Abstract Factory: Defines a method template to get shapes
-abstract class AbstractFactory {
-    abstract Shape getShape();
+class MsiMonitor implements Monitor {
+    @Override
+    public void display() {
+        System.out.println("Displaying MSI Monitor.");
+    }
 }
 
-// Concrete Factory 1: Creates normal shapes
-class NormalFactory extends AbstractFactory {
-    Shape getShape() { return new NormalShape(); }
+// Concrete Asus Products
+class AsusGpu implements Gpu {
+    @Override
+    public void assemble() {
+        System.out.println("Assembling Asus GPU.");
+    }
 }
 
-// Concrete Factory 2: Creates rounded shapes
-class RoundedFactory extends AbstractFactory {
-    Shape getShape() { return new RoundedShape(); }
+class AsusMonitor implements Monitor {
+    @Override
+    public void display() {
+        System.out.println("Displaying Asus Monitor.");
+    }
 }
 
-// Factory Producer: Creates the concrete factory based on parameter (Factory of Factories)
-class FactoryProducer {
-    public static AbstractFactory getFactory(boolean rounded) {
-        return rounded ? new RoundedFactory() : new NormalFactory();
+// Abstract Factory: Defines interface for creating families of products
+abstract class Company {
+    public abstract Gpu createGpu();
+    public abstract Monitor createMonitor();
+}
+
+// Concrete Factory 1: MSI Manufacturer
+class MsiManufacturer extends Company {
+    @Override
+    public Gpu createGpu() {
+        return new MsiGpu();
+    }
+
+    @Override
+    public Monitor createMonitor() {
+        return new MsiMonitor();
+    }
+}
+
+// Concrete Factory 2: Asus Manufacturer
+class AsusManufacturer extends Company {
+    @Override
+    public Gpu createGpu() {
+        return new AsusGpu();
+    }
+
+    @Override
+    public Monitor createMonitor() {
+        return new AsusMonitor();
     }
 }
