@@ -13,44 +13,34 @@ import java.util.Base64;
  * It provides both data integrity and authenticity checks.
  */
 public class Q22_HMACDemo {
-    public static void main(String[] args) {
-        try {
-            System.out.println("=== Q22: HMAC Generation and Verification Demo ===");
+    public static void main(String[] args) throws Exception {
+        System.out.println("=== Q22: HMAC Generation and Verification Demo ===");
 
-            String message = "Confidential Transaction Data";
-            System.out.println("Message: " + message);
+        String message = "Confidential Transaction Data";
+        System.out.println("Message: " + message);
 
-            // Step 1: Generate a secret key for HMAC-SHA256
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey secretKey = keyGen.generateKey();
+        // Step 1: Generate a secret key for HMAC-SHA256
+        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+        SecretKey secretKey = keyGen.generateKey();
 
-            // Step 2: Generate HMAC
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(secretKey);
-            byte[] hmacBytes = mac.doFinal(message.getBytes());
-            String generatedHmac = Base64.getEncoder().encodeToString(hmacBytes);
-            System.out.println("Generated HMAC (Base64): " + generatedHmac);
+        // Step 2: Generate HMAC
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(secretKey);
+        byte[] hmacBytes = mac.doFinal(message.getBytes());
+        String generatedHmac = Base64.getEncoder().encodeToString(hmacBytes);
+        System.out.println("Generated HMAC (Base64): " + generatedHmac);
 
-            // Step 3: Verify HMAC
-            // To verify, a recipient computes the HMAC of received message with the same key 
-            // and compares it to the received HMAC.
-            
-            // Recipient side computation:
-            mac.init(secretKey);
-            byte[] computedBytes = mac.doFinal(message.getBytes());
-            
-            // Safe comparison using MessageDigest.isEqual (constant-time check to prevent timing attacks)
-            boolean isValid = MessageDigest.isEqual(hmacBytes, computedBytes);
-            System.out.println("HMAC Verification Success: " + isValid);
+        // Step 3: Verify HMAC
+        mac.init(secretKey);
+        byte[] computedBytes = mac.doFinal(message.getBytes());
+        
+        boolean isValid = MessageDigest.isEqual(hmacBytes, computedBytes);
+        System.out.println("HMAC Verification Success: " + isValid);
 
-            // Verification fail check (with altered message)
-            String alteredMessage = "Confidential Transaction Data.";
-            byte[] alteredBytes = mac.doFinal(alteredMessage.getBytes());
-            boolean isAlteredValid = MessageDigest.isEqual(hmacBytes, alteredBytes);
-            System.out.println("Altered Message Verification Success: " + isAlteredValid);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Verification fail check (with altered message)
+        String alteredMessage = "Confidential Transaction Data.";
+        byte[] alteredBytes = mac.doFinal(alteredMessage.getBytes());
+        boolean isAlteredValid = MessageDigest.isEqual(hmacBytes, alteredBytes);
+        System.out.println("Altered Message Verification Success: " + isAlteredValid);
     }
 }

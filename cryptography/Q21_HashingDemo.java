@@ -10,24 +10,19 @@ import java.security.MessageDigest;
  * SHA-256 produces 256-bit hashes.
  */
 public class Q21_HashingDemo {
-    public static void main(String[] args) {
-        try {
-            System.out.println("=== Q21: Hashing Demo (MD5 and SHA-256) ===");
+    public static void main(String[] args) throws Exception {
+        System.out.println("=== Q21: Hashing Demo (MD5 and SHA-256) ===");
 
-            String input = "ExamStudyMaterial2026";
-            System.out.println("Input String : " + input);
+        String input = "ExamStudyMaterial2026";
+        System.out.println("Input String : " + input);
 
-            // Compute MD5 Hash
-            String md5Hash = getHash(input, "MD5");
-            System.out.println("MD5 Hash (128-bit)    : " + md5Hash);
+        // Compute MD5 Hash
+        String md5Hash = getHash(input, "MD5");
+        System.out.println("MD5 Hash (128-bit)    : " + md5Hash);
 
-            // Compute SHA-256 Hash
-            String sha256Hash = getHash(input, "SHA-256");
-            System.out.println("SHA-256 Hash (256-bit): " + sha256Hash);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Compute SHA-256 Hash
+        String sha256Hash = getHash(input, "SHA-256");
+        System.out.println("SHA-256 Hash (256-bit): " + sha256Hash);
     }
 
     // Helper method to compute hash using MessageDigest
