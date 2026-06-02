@@ -2,102 +2,51 @@ package difficult_questions;
 
 import java.util.List;
 
-/**
- * Q2: Shape Area Calculator demonstrating Open-Closed Principle (OCP)
- * 
- * - Open for Extension: We can add new shapes (like Pentagon) by implementing the Shape interface.
- * - Closed for Modification: The AreaCalculator class remains completely unchanged.
- */
-
-public class Q2_ShapeAreaCalculatorDemo {
-    public static void main(String[] args) {
-        System.out.println("=== Q2: Shape Area Calculator (SOLID) ===");
-
-        // List of mixed shapes including Circle, Rectangle, Triangle, and Pentagon
-        List<Shape> shapes = List.of(
-            new Circle(5),       // Area: ~78.54
-            new Rectangle(4, 5), // Area: 20
-            new Triangle(3, 4),  // Area: 6
-            new Pentagon(4)      // Area: ~27.53 (added later)
-        );
-
-        AreaCalculator calculator = new AreaCalculator();
-        double totalArea = calculator.calculateTotalArea(shapes);
-
-        System.out.printf("Total area of the mixed shapes list: %.2f\n", totalArea);
-    }
-}
-
-// Shape Abstraction
 interface Shape {
     double area();
 }
 
-// Concrete Shapes
 class Circle implements Shape {
-    private final double radius;
-
-    public Circle(double radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public double area() {
-        return Math.PI * radius * radius;
-    }
+    private double r;
+    public Circle(double r) { this.r = r; }
+    public double area() { return Math.PI * r * r; }
 }
 
 class Rectangle implements Shape {
-    private final double width;
-    private final double height;
-
-    public Rectangle(double width, double height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public double area() {
-        return width * height;
-    }
+    private double w, h;
+    public Rectangle(double w, double h) { this.w = w; this.h = h; }
+    public double area() { return w * h; }
 }
 
 class Triangle implements Shape {
-    private final double base;
-    private final double height;
-
-    public Triangle(double base, double height) {
-        this.base = base;
-        this.height = height;
-    }
-
-    @Override
-    public double area() {
-        return 0.5 * base * height;
-    }
+    private double b, h;
+    public Triangle(double b, double h) { this.b = b; this.h = h; }
+    public double area() { return 0.5 * b * h; }
 }
 
-// AreaCalculator is closed for modification
 class AreaCalculator {
     public double calculateTotalArea(List<Shape> shapes) {
-        double totalArea = 0;
-        for (Shape shape : shapes) {
-            totalArea += shape.area(); // Runtime Polymorphism
-        }
-        return totalArea;
+        double total = 0;
+        for (Shape s : shapes) total += s.area(); // Runtime Polymorphism
+        return total;
     }
 }
 
-// Adding Pentagon after — AreaCalculator MUST NOT CHANGE
+// Pentagon added later (OCP - AreaCalculator remains unmodified)
 class Pentagon implements Shape {
-    private final double side;
+    private double s;
+    public Pentagon(double s) { this.s = s; }
+    public double area() { return 1.72 * s * s; } // Simplified constant area formula
+}
 
-    public Pentagon(double side) {
-        this.side = side;
-    }
-
-    @Override
-    public double area() {
-        return 0.25 * Math.sqrt(5 * (5 + 2 * Math.sqrt(5))) * side * side;
+public class Q2_ShapeAreaCalculatorDemo {
+    public static void main(String[] args) {
+        List<Shape> shapes = List.of(
+            new Circle(5), 
+            new Rectangle(4, 5), 
+            new Triangle(3, 4), 
+            new Pentagon(4)
+        );
+        System.out.printf("Total Area of shapes: %.2f\n", new AreaCalculator().calculateTotalArea(shapes));
     }
 }
