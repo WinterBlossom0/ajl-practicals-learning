@@ -1,297 +1,169 @@
 package difficult_questions;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Q5: Student and Course Registration Microservices Simulator
+ * Q5: Student and Course Registration Microservices
  * 
- * To make this code run directly on any Java JRE without Spring Boot jar dependencies,
- * this demo implements two microservices using Java's built-in HttpServer and HttpClient.
- * It models Spring Boot controllers and endpoints exactly as specified:
+ * ===================================================================
+ * FOR EXAMS: WRITE THE STUDENTCONTROLLER AND COURSECONTROLLER CLASSES.
+ * ===================================================================
  * 
- * - StudentService (Port 8081): 
- *   - POST /students (Register student)
- *   - GET /students/{id} (Check student details; returns 404 if not found)
- * 
- * - CourseService (Port 8082):
- *   - POST /enroll?courseId=X&studentId=Y (Enroll student; calls StudentService to verify existence)
- *   - GET /courses/{courseId}/students (List enrolled students)
- * 
- * Downtime handling: If StudentService is down (e.g. server offline), CourseService handles
- * the Connection Exception gracefully and returns a clean HTTP 503 Service Unavailable error.
+ * - StudentService (Port 8081): Registers students and gets their details.
+ * - CourseService (Port 8082): Calls StudentService to verify student existence using RestTemplate.
+ * - Downtime Handling: Catches connection or client exceptions and returns clean 400/503 statuses instead of stack traces.
  */
+
 public class Q5_StudentCourseRegistrationDemo {
-
     public static void main(String[] args) {
-        System.out.println("=== Q5: Student & Course Registration Microservices ===");
+        System.out.println("=== Q5: Student & Course Registration Simulator ===");
 
-        // Step 1: Start Microservices
-        StudentService studentService = new StudentService(8081);
-        CourseService courseService = new CourseService(8082);
+        // Setup the mock environment references
+        StudentController studentService = new StudentController();
+        CourseController courseService = new CourseController();
+        RestTemplate.studentControllerRef = studentService;
 
-        studentService.start();
-        courseService.start();
-        System.out.println("Services started in background threads.");
+        // 1. Register student "Alice" (ID: 101)
+        System.out.println("\n--- 1. Registering Alice (ID: 101) in StudentService ---");
+        String regResult = studentService.registerStudent("101", "Alice");
+        System.out.println("Response: " + regResult);
 
-        // Step 2: Test client operations using HttpClient
-        HttpClient client = HttpClient.newHttpClient();
+        // 2. Enroll Alice in course "Java-101" via CourseService (Verification Success)
+        System.out.println("\n--- 2. Enrolling Alice (ID: 101) in Course 'Java-101' ---");
+        ResponseEntity<String> enrollResult = courseService.enroll("Java-101", "101");
+        System.out.println("Response: " + enrollResult);
+
+        // 3. Enroll non-existent student (ID: 999) - Handles bad ID gracefully
+        System.out.println("\n--- 3. Enrolling Non-Existent Student (ID: 999) ---");
+        ResponseEntity<String> badEnrollResult = courseService.enroll("Java-101", "999");
+        System.out.println("Response: " + badEnrollResult);
+
+        // 4. Simulate StudentService downtime - Handles offline service gracefully
+        System.out.println("\n--- 4. Simulating StudentService Downtime (Service Offline) ---");
+        RestTemplate.isServiceDown = true;
+        ResponseEntity<String> downtimeResult = courseService.enroll("Java-101", "101");
+        System.out.println("Response: " + downtimeResult);
+    }
+}
+
+// ===================================================================
+// STUDY THIS FOR EXAMS: Clean & Simple Spring Boot Microservices
+// ===================================================================
+
+// Student Microservice Controller (Runs on Port 8081)
+@RestController
+@RequestMapping("/students")
+class StudentController {
+    // In-memory Database
+    private final Map<String, String> studentDb = new HashMap<>();
+
+    @PostMapping
+    public String registerStudent(@RequestParam String id, @RequestParam String name) {
+        studentDb.put(id, name);
+        return "Student registered successfully.";
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<String> getStudent(@PathVariable String id) {
+        if (!studentDb.containsKey(id)) {
+            return ResponseEntity.status(404).body("Student Not Found"); // Return 404
+        }
+        return ResponseEntity.ok(studentDb.get(id));
+    }
+}
+
+// Course Microservice Controller (Runs on Port 8082)
+@RestController
+class CourseController {
+    private final Map<String, List<String>> courseEnrollments = new HashMap<>();
+    private final RestTemplate restTemplate = new RestTemplate(); // RestTemplate to call StudentService
+
+    @PostMapping("/enroll")
+    public ResponseEntity<String> enroll(@RequestParam String courseId, @RequestParam String studentId) {
         try {
-            // Test 2.1: Register student "Alice" (ID: 101) in StudentService
-            System.out.println("\n--- Step 2.1: Registering Student 'Alice' (ID: 101) ---");
-            HttpResponse<String> regResponse = client.send(
-                HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8081/students"))
-                    .POST(HttpRequest.BodyPublishers.ofString("id=101&name=Alice"))
-                    .build(),
-                HttpResponse.BodyHandlers.ofString()
-            );
-            System.out.println("StudentService Response Status: " + regResponse.statusCode());
-            System.out.println("StudentService Response Body: " + regResponse.body());
+            // Step 1: Call StudentService to verify student exists
+            String studentServiceUrl = "http://localhost:8081/students/" + studentId;
+            
+            // Call service; throws exception if student not found (404) or service is down
+            restTemplate.getForObject(studentServiceUrl, String.class);
 
-            // Test 2.2: Enroll student Alice in course "Java-101" via CourseService
-            System.out.println("\n--- Step 2.2: Enrolling Alice (ID: 101) in Course 'Java-101' ---");
-            HttpResponse<String> enrollResponse = client.send(
-                HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8082/enroll?courseId=Java-101&studentId=101"))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .build(),
-                HttpResponse.BodyHandlers.ofString()
-            );
-            System.out.println("CourseService Response Status: " + enrollResponse.statusCode());
-            System.out.println("CourseService Response Body: " + enrollResponse.body());
+            // Step 2: Proceed with enrollment
+            courseEnrollments.computeIfAbsent(courseId, k -> new ArrayList<>()).add(studentId);
+            return ResponseEntity.ok("Student enrolled successfully.");
 
-            // Test 2.3: Enroll non-existent student (ID: 999) - Should return 400 Bad Request
-            System.out.println("\n--- Step 2.3: Enrolling Invalid Student (ID: 999) ---");
-            HttpResponse<String> badEnrollResponse = client.send(
-                HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8082/enroll?courseId=Java-101&studentId=999"))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .build(),
-                HttpResponse.BodyHandlers.ofString()
-            );
-            System.out.println("CourseService Response Status: " + badEnrollResponse.statusCode());
-            System.out.println("CourseService Response Body: " + badEnrollResponse.body());
-
-            // Test 2.4: Stop StudentService (simulate downtime) and check CourseService handling
-            System.out.println("\n--- Step 2.4: Simulating StudentService Downtime (Shutting down Port 8081) ---");
-            studentService.stop();
-
-            HttpResponse<String> downtimeResponse = client.send(
-                HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8082/enroll?courseId=Java-101&studentId=101"))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .build(),
-                HttpResponse.BodyHandlers.ofString()
-            );
-            System.out.println("CourseService Response Status: " + downtimeResponse.statusCode());
-            System.out.println("CourseService Response Body: " + downtimeResponse.body());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Clean up and shutdown servers
-            studentService.stop();
-            courseService.stop();
-            System.out.println("\nAll microservices shutdown successfully.");
+        } catch (StudentNotFoundException e) {
+            // Graceful error handling for invalid student ID
+            return ResponseEntity.status(400).body("Enrollment Failed: Invalid Student ID.");
+        } catch (ServiceUnavailableException e) {
+            // Graceful error handling for downtime
+            return ResponseEntity.status(503).body("Enrollment Failed: Student Service is currently offline.");
         }
     }
+}
 
-    // ----------------------------------------------------
-    // MICROSERVICE 1: STUDENT SERVICE (PORT 8081)
-    // ----------------------------------------------------
-    static class StudentService {
-        private final int port;
-        private HttpServer server;
-        private final Map<String, String> studentDatabase = new ConcurrentHashMap<>();
+// ===================================================================
+// MOCK LAYER: Only to allow compilation and run without external Jars
+// ===================================================================
 
-        public StudentService(int port) {
-            this.port = port;
-        }
+// Spring Boot Annotations Placeholder
+@interface RestController {}
+@interface RequestMapping { String value(); }
+@interface PostMapping { String value() default ""; }
+@interface GetMapping { String value() default ""; }
+@interface RequestParam {}
+@interface PathVariable {}
 
-        public void start() {
-            try {
-                server = HttpServer.create(new InetSocketAddress(port), 0);
-                
-                // Route: GET /students/{id} or POST /students
-                server.createContext("/students", new HttpHandler() {
-                    @Override
-                    public void handle(HttpExchange exchange) throws IOException {
-                        String method = exchange.getRequestMethod();
-                        String path = exchange.getRequestURI().getPath();
+// Mock ResponseEntity representation
+class ResponseEntity<T> {
+    private final int status;
+    private final T body;
 
-                        if ("POST".equalsIgnoreCase(method)) {
-                            // Read post body (format: id=101&name=Alice)
-                            String body = new String(exchange.getRequestBody().readAllBytes());
-                            Map<String, String> params = parseQuery(body);
-                            String id = params.get("id");
-                            String name = params.get("name");
-
-                            if (id != null && name != null) {
-                                studentDatabase.put(id, name);
-                                sendResponse(exchange, 201, "Student " + name + " registered successfully.");
-                            } else {
-                                sendResponse(exchange, 400, "Bad Request: Missing student id or name.");
-                            }
-                        } 
-                        else if ("GET".equalsIgnoreCase(method)) {
-                            // Extract ID from path e.g. /students/101
-                            String[] segments = path.split("/");
-                            if (segments.length > 2) {
-                                String id = segments[2];
-                                if (studentDatabase.containsKey(id)) {
-                                    sendResponse(exchange, 200, "ID: " + id + ", Name: " + studentDatabase.get(id));
-                                } else {
-                                    sendResponse(exchange, 404, "Student Not Found");
-                                }
-                            } else {
-                                sendResponse(exchange, 400, "Bad Request: Missing student ID.");
-                            }
-                        }
-                    }
-                });
-
-                server.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void stop() {
-            if (server != null) {
-                server.stop(0);
-            }
-        }
+    public ResponseEntity(int status, T body) {
+        this.status = status;
+        this.body = body;
     }
 
-    // ----------------------------------------------------
-    // MICROSERVICE 2: COURSE SERVICE (PORT 8082)
-    // ----------------------------------------------------
-    static class CourseService {
-        private final int port;
-        private HttpServer server;
-        private final Map<String, List<String>> enrollments = new ConcurrentHashMap<>();
-
-        public CourseService(int port) {
-            this.port = port;
-        }
-
-        public void start() {
-            try {
-                server = HttpServer.create(new InetSocketAddress(port), 0);
-                
-                // Route: POST /enroll
-                server.createContext("/enroll", new HttpHandler() {
-                    @Override
-                    public void handle(HttpExchange exchange) throws IOException {
-                        if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                            sendResponse(exchange, 405, "Method Not Allowed");
-                            return;
-                        }
-
-                        // Parse query parameters
-                        String query = exchange.getRequestURI().getQuery();
-                        Map<String, String> params = parseQuery(query);
-                        String courseId = params.get("courseId");
-                        String studentId = params.get("studentId");
-
-                        if (courseId == null || studentId == null) {
-                            sendResponse(exchange, 400, "Bad Request: Missing courseId or studentId.");
-                            return;
-                        }
-
-                        // Step 1: Inter-service HTTP call to StudentService (Port 8081)
-                        HttpClient client = HttpClient.newHttpClient();
-                        HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create("http://localhost:8081/students/" + studentId))
-                            .GET()
-                            .build();
-
-                        try {
-                            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                            if (response.statusCode() == 404) {
-                                // Graceful Error Handling: Student Service returned 404
-                                sendResponse(exchange, 400, "Enrollment Failed: Student ID " + studentId + " does not exist in registry.");
-                                return;
-                            }
-                        } catch (IOException | InterruptedException e) {
-                            // Graceful Error Handling: Student Service is Down
-                            sendResponse(exchange, 503, "Enrollment Failed: Student Registry Service is currently offline. Details: " + e.getMessage());
-                            return;
-                        }
-
-                        // Step 2: Enroll the student since verification passed
-                        enrollments.computeIfAbsent(courseId, k -> new ArrayList<>()).add(studentId);
-                        sendResponse(exchange, 200, "Student " + studentId + " enrolled successfully in Course " + courseId);
-                    }
-                });
-
-                // Route: GET /courses/{courseId}/students
-                server.createContext("/courses", new HttpHandler() {
-                    @Override
-                    public void handle(HttpExchange exchange) throws IOException {
-                        String path = exchange.getRequestURI().getPath();
-                        String[] segments = path.split("/"); // e.g. ["", "courses", "Java-101", "students"]
-                        
-                        if (segments.length >= 4 && "students".equalsIgnoreCase(segments[3])) {
-                            String courseId = segments[2];
-                            List<String> studentList = enrollments.getOrDefault(courseId, Collections.emptyList());
-                            sendResponse(exchange, 200, studentList.toString());
-                        } else {
-                            sendResponse(exchange, 400, "Bad Request: Invalid path layout.");
-                        }
-                    }
-                });
-
-                server.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void stop() {
-            if (server != null) {
-                server.stop(0);
-            }
-        }
+    public static <T> ResponseEntity<T> ok(T body) {
+        return new ResponseEntity<>(200, body);
     }
 
-    // ----------------------------------------------------
-    // UTILITY METHODS FOR HTTP SERVICES
-    // ----------------------------------------------------
-    private static void sendResponse(HttpExchange exchange, int statusCode, String responseText) throws IOException {
-        byte[] bytes = responseText.getBytes();
-        exchange.sendResponseHeaders(statusCode, bytes.length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(bytes);
-        os.close();
+    public static <T> ResponseEntityBuilder<T> status(int status) {
+        return new ResponseEntityBuilder<>(status);
     }
 
-    private static Map<String, String> parseQuery(String query) {
-        Map<String, String> result = new HashMap<>();
-        if (query == null || query.isEmpty()) {
-            return result;
+    @Override
+    public String toString() {
+        return "HTTP " + status + " | Body: " + body;
+    }
+
+    static class ResponseEntityBuilder<T> {
+        private final int status;
+        public ResponseEntityBuilder(int status) { this.status = status; }
+        public <R> ResponseEntity<R> body(R body) { return new ResponseEntity<>(status, body); }
+    }
+}
+
+// Mock Exceptions
+class StudentNotFoundException extends RuntimeException {}
+class ServiceUnavailableException extends RuntimeException {}
+
+// Mock RestTemplate class simulating API calls
+class RestTemplate {
+    public static StudentController studentControllerRef;
+    public static boolean isServiceDown = false;
+
+    public String getForObject(String url, Class<String> responseType) {
+        if (isServiceDown) {
+            throw new ServiceUnavailableException(); // Simulates connection error
         }
-        for (String param : query.split("&")) {
-            String[] entry = param.split("=");
-            if (entry.length > 1) {
-                result.put(entry[0], entry[1]);
-            } else {
-                result.put(entry[0], "");
-            }
+        
+        // Extract student ID from the end of url
+        String id = url.substring(url.lastIndexOf("/") + 1);
+        ResponseEntity<String> response = studentControllerRef.getStudent(id);
+        
+        if (response.toString().contains("404")) {
+            throw new StudentNotFoundException(); // Simulates HTTP 404
         }
-        return result;
+        return response.toString();
     }
 }
