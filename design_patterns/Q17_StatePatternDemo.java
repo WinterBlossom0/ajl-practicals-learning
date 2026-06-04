@@ -1,28 +1,43 @@
 public class Q17_StatePatternDemo {
     public static void main(String[] args) {
-        Context context = new Context();
-        State start = new StartState();
-        
-        // Execute action which alters the context's internal state
-        start.doAction(context);
-        System.out.println(context.getState()); // Start State
+        Fan fan = new Fan();
+
+        fan.pressButton();
+        fan.pressButton();
     }
 }
 
-// 1. State Interface
-interface State {
-    void doAction(Context c);
+// State interface: every state must define button behavior
+interface FanState {
+    void pressButton(Fan fan);
 }
 
-// 2. Concrete State (changes Context state to itself)
-class StartState implements State {
-    public void doAction(Context c) { c.setState(this); }
-    public String toString() { return "Start State"; }
+// Concrete State 1: OFF state
+class OffState implements FanState {
+    public void pressButton(Fan fan) {
+        System.out.println("Fan is now ON");
+
+        // Change state from OFF to ON
+        fan.state = new OnState();
+    }
 }
 
-// 3. Context (holds current active state)
-class Context {
-    private State state;
-    public void setState(State s) { state = s; }
-    public State getState() { return state; }
+// Concrete State 2: ON state
+class OnState implements FanState {
+    public void pressButton(Fan fan) {
+        System.out.println("Fan is now OFF");
+
+        // Change state from ON to OFF
+        fan.state = new OffState();
+    }
+}
+
+// Context class: object whose behavior changes
+class Fan {
+    FanState state = new OffState(); // initial state
+
+    void pressButton() {
+        // Current state decides what happens
+        state.pressButton(this);
+    }
 }
