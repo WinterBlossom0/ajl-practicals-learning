@@ -1,29 +1,49 @@
 public class Q18_TemplatePatternDemo {
     public static void main(String[] args) {
-        Game game = new Chess();
-        // Invoke template method to execute steps in order
-        game.play(); 
+
+        // Same template, different item
+        Drink drink = new Tea();
+        drink.makeDrink();
+
+        System.out.println();
+
+        drink = new Coffee();
+        drink.makeDrink();
     }
 }
 
-// Abstract class defining the template method pattern structure
-abstract class Game {
-    // Primitive operations implemented by subclasses
-    abstract void initialize();
-    abstract void start();
-    abstract void end();
-    
-    // The Template Method: Final structure of algorithm steps
-    public final void play() { 
-        initialize(); 
-        start(); 
-        end(); 
+// Abstract class: contains fixed algorithm
+abstract class Drink {
+
+    // Template method: fixed steps
+    final void makeDrink() {
+        boilWater();
+        addItem();
+        serve();
+    }
+
+    void boilWater() {
+        System.out.println("Boiling water");
+    }
+
+    // Child class will define this step
+    abstract void addItem();
+
+    void serve() {
+        System.out.println("Serving drink");
     }
 }
 
-// Concrete subclass providing specific step details
-class Chess extends Game {
-    void initialize() { System.out.println("Chess Init"); }
-    void start() { System.out.println("Chess Start"); }
-    void end() { System.out.println("Chess End"); }
+// Child class 1
+class Tea extends Drink {
+    void addItem() {
+        System.out.println("Adding tea leaves");
+    }
+}
+
+// Child class 2
+class Coffee extends Drink {
+    void addItem() {
+        System.out.println("Adding coffee powder");
+    }
 }
