@@ -1,35 +1,45 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Q10_FlyweightPatternDemo {
     public static void main(String[] args) {
-        // Request identical objects from the factory
-        Pen redPen1 = PenFactory.getPen("RED");
-        Pen redPen2 = PenFactory.getPen("RED");
-        
-        // Output true because the exact same object is reused
-        System.out.println(redPen1 == redPen2); 
+
+        // Both use same red pen object
+        Pen p1 = PenFactory.getPen("Red");
+        Pen p2 = PenFactory.getPen("Red");
+
+        p1.draw("Hello");
+        p2.draw("World");
+
+        // Proves object is reused
+        System.out.println(p1 == p2);
     }
 }
 
-// Flyweight Interface
-interface Pen {
-    void draw();
+// Flyweight object
+class Pen {
+    String color; // shared data
+
+    Pen(String color) {
+        this.color = color;
+    }
+
+    void draw(String text) {
+        System.out.println(color + " pen writes: " + text);
+    }
 }
 
-// Concrete Flyweight (Contains shared state)
-class ThickPen implements Pen {
-    private final String color; // Intrinsic (shared) state
-    public ThickPen(String color) { this.color = color; }
-    public void draw() { System.out.println("Thick pen drawn in " + color); }
-}
-
-// Flyweight Factory (manages caching and reuse of objects)
+// Factory stores and reuses Pen objects
 class PenFactory {
-    private static final Map<String, Pen> map = new HashMap<>();
-    
-    public static Pen getPen(String color) {
-        // Returns the cached object if present, else creates and registers it
-        return map.computeIfAbsent(color, ThickPen::new);
+    static HashMap<String, Pen> pens = new HashMap<>();
+
+    static Pen getPen(String color) {
+
+        // Create pen only if it does not already exist
+        if (!pens.containsKey(color)) {
+            pens.put(color, new Pen(color));
+        }
+
+        // Return existing pen
+        return pens.get(color);
     }
 }
