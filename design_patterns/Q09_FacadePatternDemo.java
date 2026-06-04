@@ -1,28 +1,45 @@
 public class Q09_FacadePatternDemo {
     public static void main(String[] args) {
-        // Client interacts only with the Facade class
-        ComputerFacade computer = new ComputerFacade();
-        computer.start();
+
+        // User only talks to Facade
+        Computer computer = new Computer();
+
+        // One simple call starts everything
+        computer.startComputer();
     }
 }
 
-// Subsystem Class 1
+// Subsystem class 1
 class CPU {
-    void freeze() { System.out.println("CPU Freeze"); }
+    void start() {
+        System.out.println("CPU started");
+    }
 }
 
-// Subsystem Class 2
-class HardDrive {
-    void read() { System.out.println("HD Read"); }
+// Subsystem class 2
+class RAM {
+    void load() {
+        System.out.println("RAM loaded");
+    }
 }
 
-// Facade Class: Hides the complex interactions of subsystems behind a simple API
-class ComputerFacade {
-    private final CPU cpu = new CPU();
-    private final HardDrive hd = new HardDrive();
-    
-    public void start() {
-        cpu.freeze();
-        hd.read();
+// Subsystem class 3
+class HardDisk {
+    void read() {
+        System.out.println("Hard Disk reading");
+    }
+}
+
+// Facade class: gives one simple method
+class Computer {
+    CPU cpu = new CPU();
+    RAM ram = new RAM();
+    HardDisk hardDisk = new HardDisk();
+
+    // One method hides all internal steps
+    void startComputer() {
+        cpu.start();
+        ram.load();
+        hardDisk.read();
     }
 }
