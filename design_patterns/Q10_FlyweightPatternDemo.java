@@ -1,45 +1,32 @@
-import java.util.*;
-
 public class Q10_FlyweightPatternDemo {
     public static void main(String[] args) {
 
-        // Both use same red pen object
-        Pen p1 = PenFactory.getPen("Red");
-        Pen p2 = PenFactory.getPen("Red");
+        // Both variables get same Red pen object
+        Pen p1 = PenFactory.getPen();
+        Pen p2 = PenFactory.getPen();
 
-        p1.draw("Hello");
-        p2.draw("World");
+        p1.write();
+        p2.write();
 
-        // Proves object is reused
+        // true means same object is reused
         System.out.println(p1 == p2);
     }
 }
 
-// Flyweight object
+// Flyweight class: object to be reused
 class Pen {
-    String color; // shared data
+    String color = "Red";
 
-    Pen(String color) {
-        this.color = color;
-    }
-
-    void draw(String text) {
-        System.out.println(color + " pen writes: " + text);
+    void write() {
+        System.out.println(color + " pen");
     }
 }
 
-// Factory stores and reuses Pen objects
+// Flyweight Factory: gives same shared object
 class PenFactory {
-    static HashMap<String, Pen> pens = new HashMap<>();
+    static Pen redPen = new Pen(); // created only once
 
-    static Pen getPen(String color) {
-
-        // Create pen only if it does not already exist
-        if (!pens.containsKey(color)) {
-            pens.put(color, new Pen(color));
-        }
-
-        // Return existing pen
-        return pens.get(color);
+    static Pen getPen() {
+        return redPen; // same object reused
     }
 }
