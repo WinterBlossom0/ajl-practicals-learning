@@ -1,44 +1,51 @@
 public class Q04_BuilderPatternDemo {
     public static void main(String[] args) {
-        // Construct the complex User object step-by-step using method chaining
-        User u = new User.UserBuilder("John", "Doe").age(25).build();
-        System.out.println(u.firstName + " " + u.lastName + ", Age: " + u.age);
+
+        // Build Phone object step by step
+        Phone p = new PhoneBuilder()
+                .setBrand("Samsung")
+                .setPrice(50000)
+                .build();
+
+        p.show();
     }
 }
 
-class User {
-    // Required fields
-    String firstName, lastName;
-    // Optional field
-    int age;
+// Object to be created
+class Phone {
+    String brand;
+    int price;
 
-    // Private constructor so object can only be created via the Builder
-    private User(UserBuilder b) {
-        this.firstName = b.firstName;
-        this.lastName = b.lastName;
-        this.age = b.age;
+    // Constructor takes Builder object
+    Phone(PhoneBuilder builder) {
+        brand = builder.brand;
+        price = builder.price;
     }
 
-    // Static nested Builder class
-    public static class UserBuilder {
-        String firstName, lastName;
-        int age;
+    void show() {
+        System.out.println(brand + " " + price);
+    }
+}
 
-        // Constructor handles required fields
-        public UserBuilder(String fn, String ln) {
-            this.firstName = fn;
-            this.lastName = ln;
-        }
+// Builder creates Phone step by step
+class PhoneBuilder {
+    String brand;
+    int price;
 
-        // Setter method for optional field (returns 'this' for method chaining)
-        public UserBuilder age(int age) {
-            this.age = age;
-            return this;
-        }
+    // Set brand and return same builder
+    PhoneBuilder setBrand(String brand) {
+        this.brand = brand;
+        return this;
+    }
 
-        // Builds and returns the final complex object
-        public User build() {
-            return new User(this);
-        }
+    // Set price and return same builder
+    PhoneBuilder setPrice(int price) {
+        this.price = price;
+        return this;
+    }
+
+    // Create final Phone object
+    Phone build() {
+        return new Phone(this);
     }
 }
