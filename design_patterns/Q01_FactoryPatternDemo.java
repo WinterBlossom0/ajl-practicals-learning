@@ -1,46 +1,52 @@
 public class Q01_FactoryPatternDemo {
     public static void main(String[] args) {
 
-        // Create factory object
-        ShapeFactory factory = new ShapeFactory();
+        // Choose factory
+        ShapeFactory factory = new CircleFactory();
 
-        // Ask factory to create a Circle
-        Shape shape = factory.createShape("circle");
+        // Factory creates object
+        Shape shape = factory.createShape();
 
-        // Call method of created object
+        // Use object
         shape.draw();
     }
 }
 
-// Common interface for all shapes
+// Product interface
 interface Shape {
     void draw();
 }
 
-// Circle class implements Shape
+// Concrete product 1
 class Circle implements Shape {
     public void draw() {
         System.out.println("Circle is drawn");
     }
 }
 
-// Square class implements Shape
+// Concrete product 2
 class Square implements Shape {
     public void draw() {
         System.out.println("Square is drawn");
     }
 }
 
-// Factory class creates Shape objects
-class ShapeFactory {
+// Creator class with factory method
+abstract class ShapeFactory {
+    // Factory method
+    abstract Shape createShape();
+}
 
-    // This method decides which object to create
-    Shape createShape(String type) {
+// Factory for Circle
+class CircleFactory extends ShapeFactory {
+    Shape createShape() {
+        return new Circle();
+    }
+}
 
-        if (type.equals("circle")) {
-            return new Circle();   // create Circle object
-        } else {
-            return new Square();   // create Square object
-        }
+// Factory for Square
+class SquareFactory extends ShapeFactory {
+    Shape createShape() {
+        return new Square();
     }
 }
