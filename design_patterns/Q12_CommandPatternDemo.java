@@ -1,33 +1,53 @@
 public class Q12_CommandPatternDemo {
     public static void main(String[] args) {
-        Light light = new Light(); // Receiver
-        Command command = new LightOnCommand(light); // Command
-        SimpleRemote remote = new SimpleRemote(command); // Invoker
-        
-        remote.pressButton(); // Invoker triggers execution: Light is ON
+
+        // Real object
+        Light light = new Light();
+
+        // Command object stores the action
+        Command command = new LightOnCommand(light);
+
+        // Remote executes the command
+        Remote remote = new Remote(command);
+        remote.pressButton();
     }
 }
 
-// 1. Command Interface
+// Command interface
 interface Command {
     void execute();
 }
 
-// 2. Receiver (The object that performs the actual action)
+// Receiver: class that actually does the work
 class Light {
-    public void turnOn() { System.out.println("Light is ON"); }
+    void turnOn() {
+        System.out.println("Light is ON");
+    }
 }
 
-// 3. Concrete Command (Wraps receiver action inside execute method)
+// Concrete command: wraps the action
 class LightOnCommand implements Command {
-    private final Light light;
-    public LightOnCommand(Light l) { light = l; }
-    public void execute() { light.turnOn(); }
+    Light light;
+
+    LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    // Calls the real action
+    public void execute() {
+        light.turnOn();
+    }
 }
 
-// 4. Invoker (Asks the command to carry out the request)
-class SimpleRemote {
-    private final Command command;
-    public SimpleRemote(Command c) { command = c; }
-    public void pressButton() { command.execute(); }
+// Invoker: uses the command
+class Remote {
+    Command command;
+
+    Remote(Command command) {
+        this.command = command;
+    }
+
+    void pressButton() {
+        command.execute();
+    }
 }
