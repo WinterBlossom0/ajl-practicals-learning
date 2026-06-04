@@ -141,7 +141,7 @@ Open your terminal at the root of the workspace directory (`c:\Users\vihaa\OneDr
   java cryptography/Q20_EncryptionDecryptionDemo.java
   ```
 
-* **Q21: Hashing Algorithms (MD5/SHA-256)**
+* **Q21: Hashing (SHA-256)**
   ```bash
   java cryptography/Q21_HashingDemo.java
   ```
