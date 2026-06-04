@@ -1,57 +1,46 @@
 public class Q01_FactoryPatternDemo {
     public static void main(String[] args) {
-        System.out.println("=== Factory Method Pattern ===");
 
-        Restaurant beefRest = new BeefBurgerRestaurant();
-        beefRest.orderBurger();
+        // Create factory object
+        ShapeFactory factory = new ShapeFactory();
 
-        Restaurant veggieRest = new VeggieBurgerRestaurant();
-        veggieRest.orderBurger();
+        // Ask factory to create a Circle
+        Shape shape = factory.createShape("circle");
+
+        // Call method of created object
+        shape.draw();
     }
 }
 
-// Product Interface
-interface Burger {
-    void prepare();
+// Common interface for all shapes
+interface Shape {
+    void draw();
 }
 
-// Concrete Products
-class BeefBurger implements Burger {
-    @Override
-    public void prepare() {
-        System.out.println("Preparing Beef Burger.");
+// Circle class implements Shape
+class Circle implements Shape {
+    public void draw() {
+        System.out.println("Circle is drawn");
     }
 }
 
-class VeggieBurger implements Burger {
-    @Override
-    public void prepare() {
-        System.out.println("Preparing Veggie Burger.");
+// Square class implements Shape
+class Square implements Shape {
+    public void draw() {
+        System.out.println("Square is drawn");
     }
 }
 
-// Creator
-abstract class Restaurant {
-    public Burger orderBurger() {
-        Burger burger = createBurger();
-        burger.prepare();
-        return burger;
-    }
-    
-    public abstract Burger createBurger();
-}
+// Factory class creates Shape objects
+class ShapeFactory {
 
-// Concrete Creators
-class BeefBurgerRestaurant extends Restaurant {
-    @Override
-    public Burger createBurger() {
-        return new BeefBurger();
-    }
-}
+    // This method decides which object to create
+    Shape createShape(String type) {
 
-class VeggieBurgerRestaurant extends Restaurant {
-    @Override
-    public Burger createBurger() {
-        return new VeggieBurger();
+        if (type.equals("circle")) {
+            return new Circle();   // create Circle object
+        } else {
+            return new Square();   // create Square object
+        }
     }
 }
