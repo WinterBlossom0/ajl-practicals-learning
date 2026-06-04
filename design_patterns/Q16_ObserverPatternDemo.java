@@ -1,36 +1,51 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Q16_ObserverPatternDemo {
     public static void main(String[] args) {
-        Subject subject = new Subject();
-        new HexObserver(subject); // Register observer
-        
-        // Changing state triggers automatic updates to all observers
-        subject.setState(15); // Outputs: Hex: F
+
+        // Create subject
+        Channel channel = new Channel();
+
+        // Add observers
+        channel.subscribe(new Subscriber("Raj"));
+        channel.subscribe(new Subscriber("Aman"));
+
+        // One change notifies all observers
+        channel.uploadVideo("Java Observer Pattern");
     }
 }
 
-// 1. Subject (The observed object maintaining list of observers)
-class Subject {
-    private final List<Observer> observers = new ArrayList<>();
-    private int state;
-    
-    public int getState() { return state; }
-    public void setState(int val) { state = val; notifyAllObservers(); }
-    
-    public void attach(Observer o) { observers.add(o); }
-    public void notifyAllObservers() { for (Observer o : observers) o.update(); }
+// Observer interface: all observers must have update()
+interface Observer {
+    void update(String video);
 }
 
-// 2. Observer Interface
-abstract class Observer {
-    protected Subject subject;
-    abstract void update();
+// Concrete Observer: gets notified
+class Subscriber implements Observer {
+    String name;
+
+    Subscriber(String name) {
+        this.name = name;
+    }
+
+    public void update(String video) {
+        System.out.println(name + " got notification: " + video);
+    }
 }
 
-// 3. Concrete Observer
-class HexObserver extends Observer {
-    public HexObserver(Subject s) { subject = s; subject.attach(this); }
-    void update() { System.out.println("Hex: " + Integer.toHexString(subject.getState()).toUpperCase()); }
+// Subject: stores observers and notifies them
+class Channel {
+    ArrayList<Observer> subscribers = new ArrayList<>();
+
+    // Add observer
+    void subscribe(Observer observer) {
+        subscribers.add(observer);
+    }
+
+    // Notify all observers
+    void uploadVideo(String video) {
+        for (Observer observer : subscribers) {
+            observer.update(video);
+        }
+    }
 }
